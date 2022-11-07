@@ -1,4 +1,4 @@
-// Author:
+// Author: Alan Manuel Loreto Cornidez, Jeremy Sharp, Jason Freeman
 // Net ID:
 // Date:
 // Assignment:     Lab 3
@@ -9,9 +9,6 @@
 //
 // Requirements:
 //----------------------------------------------------------------------//
-
-
-
 
 #include <Arduino.h>
 
@@ -31,28 +28,29 @@ int motorState = 0;
 #define off 0
 // defines
 
-int num =0;
+int num = 0;
 int cds = 0;
 /*
  * Define a set of states that can be used in the state machine using an enum.
  */
 // typedef enum .......
 
+// Initialize states.  Remember to use volatile
 
-// Initialize states.  Remember to use volatile 
-
-
-void countDown(){
+void countDown()
+{
   int cdt = 9;
-  while(cdt >= 0){
-  turnOn7SegWithNum(cdt);
-  delayS(1);
-  cdt--;
+  while (cdt >= 0)
+  {
+    turnOn7SegWithNum(cdt);
+    delayS(1);
+    cdt--;
   }
   turnOn7SegWithNum(-1);
 }
 
-int main(){
+int main()
+{
   Serial.begin(9600);
   init7Seg();
   initTimer0();
@@ -60,52 +58,56 @@ int main(){
   initSwitchPD0();
   sei();
 
-
-
-  while(1){
-    if(num > 9){
-      num =0;
+  while (1)
+  {
+    if (num > 9)
+    {
+      num = 0;
     }
-    if(cds == on){
+    if (cds == on)
+    {
       countDown();
       cds = off;
     }
-  
-  switch(btncase) { //debounce button
-   case wt_press:
-        break;
-   case db_press:
-        delayMs(1);
-        btncase = wt_release;
-        break;
+
+    switch (btncase)
+    { // debounce button
+    case wt_press:
+      break;
+    case db_press:
+      delayMs(1);
+      btncase = wt_release;
+      break;
     case wt_release:
-        break;
+      break;
     case db_release:
-        delayMs(1);
-        btncase = wt_press;
-        break;          
+      delayMs(1);
+      btncase = wt_press;
+      break;
     }
-
   }
-  }
+}
 
-  ISR(INT0_vect){ //ISR
-  if( btncase == wt_press) { //move through state machine based on button
+ISR(INT0_vect)
+{ // ISR
+  if (btncase == wt_press)
+  { // move through state machine based on button
     btncase = db_press;
   }
-  else if (btncase == wt_release) {
+  else if (btncase == wt_release)
+  {
     Serial.println("rel");
-    if(motorState == off) {  // change motor power state
+    if (motorState == off)
+    { // change motor power state
       motorState = on;
       Serial.println("motor on");
-      
     }
-    else {
+    else
+    {
       motorState = off; // change motor power state
       Serial.println("motor off");
       cds = on;
-     }  
-     btncase = db_release;
- 
-}
+    }
+    btncase = db_release;
+  }
 }
