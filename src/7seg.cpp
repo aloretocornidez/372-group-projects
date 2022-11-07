@@ -47,10 +47,6 @@ void turnOn7SegWithNum(int num){
         case 9:
             PORTC = 0b01100111;
             break;
-        
-        default:
-            PORTC = 0b00000000;
-            break;
     }
     
 
