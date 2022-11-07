@@ -1,8 +1,8 @@
 # **ECE 372 Lab 4 Project Description**
 ## Group Members
+- Jason Freeman
 - Alan Manuel Loreto Cornídez
 - Jeremy Sharp
-- Jason Freeman
 
 # Description
 In this lab, you will control the speed and rotation of a dc motor using PWM signals, a potentiometer and the L293D driver chip included in your kit. The code provided is minimal.
