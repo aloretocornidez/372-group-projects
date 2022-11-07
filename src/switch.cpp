@@ -9,14 +9,9 @@
  * Initializes pull-up resistor on PB3 and sets it into input mode
  */
 void initSwitchPD0(){
-    //Set direction for the input
-    DDRD &= ~(1 << DDD0);
+    DDRD &= ~(0 << DDD0); //initailize pin
+    PORTD |= (1 << PORTD0); //iniatilize pulllup
 
-    // enable the pullup resistor for stable input
-    PORTD |= (1 << PORTD0);
-
-    // Enable Interupts for switch
-    PCICR |= (1 << PCIE0); // enabling INT0
-    
-    PCMSK0 |= (1 << PCINT3); // enabling PCINT3
+    EICRA |= (1 << ISC00); //set up interrumpt
+    EIMSK |= (1 << INT0);
 }
