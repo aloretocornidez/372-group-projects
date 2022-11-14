@@ -1,5 +1,4 @@
-
-Authors:
+Authors: Alan, Jason, Jeremy
 NetIDs:
 Date:
 Project Name: Lab 5
