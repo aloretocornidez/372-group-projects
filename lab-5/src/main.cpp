@@ -34,7 +34,7 @@
 
 signed int readSensor(unsigned char sensorHigh, unsigned char sensorLow);
 
-
+/*
 
 int main()
 {
@@ -44,9 +44,9 @@ int main()
     init_SPI(); // Initialize SPI protocol for the LED Matrix (that shows the smiley face)
 
 
-    /*
-     * Gyroscope Initialization
-     */
+    //
+    // Gyroscope Initialization
+    //
     initI2C(); // initialize I2C and set bit rate
     float xAxis = 0;
     float yAxis = 0;
@@ -56,9 +56,9 @@ int main()
     write(WAKEUP);   // send data to Wake up from sleep mode
 
     StopI2C_Trans();
-    /*
-     * Finish Gyrozope Initialization
-     */
+    //
+    // Finish Gyrozope Initialization
+    //
 
     while (1)
     {
@@ -83,6 +83,21 @@ int main()
     return 0;
 }
 
+*/
 
+int main()
+{
 
+    while (1)
+    {
+        // Initialiize PWM
+        initPWMTimer3(true);
 
+        _delay_ms(500);
+
+        initPWMTimer3(false);
+        _delay_ms(500);
+    }
+
+    return 0;
+}

@@ -7,7 +7,7 @@
 #ifndef PWM_H
 #define PWM_H
 
-void initPWMTimer3(); 
+void initPWMTimer3(bool); 
 
 
 #endif
