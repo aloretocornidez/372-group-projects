@@ -37,22 +37,10 @@
 #define wt_release 2
 #define db_release 3
 int btncase = 0;
-int motorState = 0;
 #define on 1
 #define off 0
-int num = 0;
-int cds = 0;
 
-#define happy true
 #define sad false
-
-typedef enum state
-{
-    wait_press,
-    debounce_press,
-    wait_release,
-    debounce_release
-} buttonState;
 
 typedef enum accelerometerState
 {
@@ -60,7 +48,6 @@ typedef enum accelerometerState
     trippedState
 } acceleroMeterState;
 
-volatile buttonState state = wait_press;
 volatile acceleroMeterState accelState = initialState;
 
 signed int readSensor(unsigned char sensorHigh, unsigned char sensorLow);
@@ -72,7 +59,7 @@ void turnOn()
     TCCR4B &= ~((1 << CS41) | (1 << CS42));
 
     // output
-    DDRH |= (1 << DDH5);
+    DDRE |= (1 << DDE3);
 }
 void turnOff()
 {
@@ -80,17 +67,20 @@ void turnOff()
     TCCR4B &= ~((1 << CS41) | (1 << CS42) | (1 << CS40));
 
     // low
-    DDRH &= ~(1 << DDH5);
+    DDRE &= ~(1 << DDE3);
 }
 
-bool turnedOn = false;
+bool buzzerOn = false;
+bool happy = true;
 
 int main()
 {
 
     Serial.begin(9600); // using serial port to print values from I2C bus
+
     sei();
     init_SPI(); // Initialize SPI protocol for the LED Matrix (that shows the smiley face)
+    initSwitchPB3();
 
     //
     // Gyroscope Initialization
@@ -108,71 +98,58 @@ int main()
     // Finish Gyrozope Initialization
     //
 
+    // Variables to keep track of the state of the face and the buzzer.
+    initPWMTimer3(true);
+
     while (1)
     {
 
         // Read the data from the gyroscope
         readAllAxes(&xAxis, &yAxis, &zAxis);
-        printAxes(&xAxis, &yAxis, &zAxis);
         StopI2C_Trans();
-        initSwitchPB3();
-        sei();
+        printAxes(&xAxis, &yAxis, &zAxis);
 
-        // If the data is our of the threshold, then initialize the alarm and make a sad face.
-        if (zAxis > 10000 || yAxis > 10000 || zAxis < -10000 || yAxis < -10000)
+        switch (accelState)
         {
-            // // Acceleromter is tripped.
-            // accelState = trippedState;
+        // Happy state of the accelerometer.
+        case initialState:
+
+            // if the acceleromter is tripped turn make face sad and turn on buzzer
+            if (zAxis > 10000 || yAxis > 10000 || zAxis < -10000 || yAxis < -10000)
+            {
+
+                // Buzzer is turned on.
+                buzzerOn = true;
+                // Face is happy
+                happy = false;
+                // Accelerometer is send to normal state.
+                accelState = trippedState;
+            }
+
+        // Tripped state of the acceleromter.
+        case trippedState:
+
+            // When the accelerometer is tripped, if the thresholds return to normal.
+            if (zAxis < 10000 && yAxis < 10000 && zAxis > -10000 && yAxis > -10000)
+            {
+
+                happy = true;
+                buzzerOn = false;
+                accelState = initialState;
+            }
+        }
+
+        // The buzzer turns off whenever the switch is pressed or if the accelerometer returns to neutral.
+
+        if (buzzerOn)
             turnOn();
-            initPWMTimer3(true);
-            face(sad);
-        }
-        // Else turn off the speaker and make a happy face.
         else
-        {
             turnOff();
-            initPWMTimer3(false);
+
+        if (happy)
             face(happy);
-        }
-
-        // // If accelerometer is tripped, then the buzzer and the face go sad.
-        // switch (accelState)
-        // {
-        // case initialState:
-        //     face(happy);
-        //     turnOff();
-        //     if (zAxis <= 10000)
-        //     {
-        //         accelState = trippedState;
-        //     }
-        // case trippedState:
-        //     face(sad);
-        //     turnOn();
-        //     turnedOn = true;
-        //     initPWMTimer3(false);
-
-        //     if (zAxis < 10000 && zAxis > -10000 && yAxis < 10000 && yAxis > -10000)
-        //     {
-        //         accelState = initialState;
-        //     }
-        // default:
-        //     break;
-        // }
-
-        // switch (btncase)
-        // { // debounce button
-        // case wt_press:
-        //     break;
-        // case db_press:
-        //     btncase = wt_release;
-        //     break;
-        // case wt_release:
-        //     break;
-        // case db_release:
-        //     turnOff();
-        //     btncase = wt_press;
-        //     break;
-        // }
+        else
+            face(sad);
     }
 
     return 0;
@@ -186,18 +163,19 @@ ISR(PCINT0_vect)
     }
     else if (btncase == wt_release)
     {
-        Serial.println("rel");
-        if (motorState == off)
-        { // change motor power state
-            motorState = on;
-            Serial.println("motor on");
-        }
-        else
+        Serial.println("in wt_release");
+        if(buzzerOn == true)
         {
-            motorState = off; // change motor power state
-            Serial.println("motor off");
-            cds = on;
+            buzzerOn = false;
         }
-        btncase = db_release;
+        else if(buzzerOn == false)
+        {
+            buzzerOn = true;
+        }
     }
+    else
+    {
+        Serial.println("in");
+    }
+    btncase = db_release;
 }
