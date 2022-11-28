@@ -32,9 +32,58 @@
 #define SL_TEMP_HIGH 0x41
 #define SL_TEMP_LOW 0x42
 
+#define wt_press 0
+#define db_press 1
+#define wt_release 2
+#define db_release 3
+int btncase = 0;
+int motorState = 0;
+#define on 1
+#define off 0
+int num = 0;
+int cds = 0;
+
+#define happy true
+#define sad false
+
+typedef enum state
+{
+    wait_press,
+    debounce_press,
+    wait_release,
+    debounce_release
+} buttonState;
+
+typedef enum accelerometerState
+{
+    initialState,
+    trippedState
+} acceleroMeterState;
+
+volatile buttonState state = wait_press;
+volatile acceleroMeterState accelState = initialState;
+
 signed int readSensor(unsigned char sensorHigh, unsigned char sensorLow);
 
-/*
+void turnOn()
+{
+    // prescaler 1
+    TCCR4B |= (1 << CS40);
+    TCCR4B &= ~((1 << CS41) | (1 << CS42));
+
+    // output
+    DDRH |= (1 << DDH5);
+}
+void turnOff()
+{
+    // prescaler no clock
+    TCCR4B &= ~((1 << CS41) | (1 << CS42) | (1 << CS40));
+
+    // low
+    DDRH &= ~(1 << DDH5);
+}
+
+bool turnedOn = false;
 
 int main()
 {
@@ -42,7 +91,6 @@ int main()
     Serial.begin(9600); // using serial port to print values from I2C bus
     sei();
     init_SPI(); // Initialize SPI protocol for the LED Matrix (that shows the smiley face)
-
 
     //
     // Gyroscope Initialization
@@ -63,41 +111,93 @@ int main()
     while (1)
     {
 
-        //_delay_ms(500);
+        // Read the data from the gyroscope
         readAllAxes(&xAxis, &yAxis, &zAxis);
-        //printAxes(&xAxis, &yAxis, &zAxis);
+        printAxes(&xAxis, &yAxis, &zAxis);
         StopI2C_Trans();
+        initSwitchPB3();
+        sei();
 
+        // If the data is our of the threshold, then initialize the alarm and make a sad face.
+        if (zAxis > 10000 || yAxis > 10000 || zAxis < -10000 || yAxis < -10000)
+        {
+            // // Acceleromter is tripped.
+            // accelState = trippedState;
+            turnOn();
+            initPWMTimer3(true);
+            face(sad);
+        }
+        // Else turn off the speaker and make a happy face.
+        else
+        {
+            turnOff();
+            initPWMTimer3(false);
+            face(happy);
+        }
 
+        // // If accelerometer is tripped, then the buzzer and the face go sad.
+        // switch (accelState)
+        // {
+        // case initialState:
+        //     face(happy);
+        //     turnOff();
+        //     if (zAxis <= 10000)
+        //     {
+        //         accelState = trippedState;
+        //     }
+        // case trippedState:
+        //     face(sad);
+        //     turnOn();
+        //     turnedOn = true;
+        //     initPWMTimer3(false);
 
-        // Call this function for to display the face.
-        face(true);
+        //     if (zAxis < 10000 && zAxis > -10000 && yAxis < 10000 && yAxis > -10000)
+        //     {
+        //         accelState = initialState;
+        //     }
+        // default:
+        //     break;
+        // }
 
-        // Arduino Time Delay.
-        _delay_ms(1000); // delay for 1 s to display "HI"
-
-
-        face(false);
+        // switch (btncase)
+        // { // debounce button
+        // case wt_press:
+        //     break;
+        // case db_press:
+        //     btncase = wt_release;
+        //     break;
+        // case wt_release:
+        //     break;
+        // case db_release:
+        //     turnOff();
+        //     btncase = wt_press;
+        //     break;
+        // }
     }
 
     return 0;
 }
 
-*/
-
-int main()
-{
-
-    while (1)
-    {
-        // Initialiize PWM
-        initPWMTimer3(true);
-
-        _delay_ms(500);
-
-        initPWMTimer3(false);
-        _delay_ms(500);
+ISR(PCINT0_vect)
+{ // ISR
+    if (btncase == wt_press)
+    { // move through state machine based on button
+        btncase = db_press;
     }
-
-    return 0;
+    else if (btncase == wt_release)
+    {
+        Serial.println("rel");
+        if (motorState == off)
+        { // change motor power state
+            motorState = on;
+            Serial.println("motor on");
+        }
+        else
+        {
+            motorState = off; // change motor power state
+            Serial.println("motor off");
+            cds = on;
+        }
+        btncase = db_release;
+    }
 }

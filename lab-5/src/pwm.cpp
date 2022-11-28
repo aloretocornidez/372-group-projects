@@ -12,7 +12,6 @@
 void initPWMTimer3(bool power)
 {
     DDRE |= (1 << DDE3);
-
     //  Use  PWM mode 14 bit, top value is determined by ICR1 value,
     //  which determines the PWM frequency.
     TCCR3A &= ~((1 << COM3A0) | (1 << WGM30));
@@ -23,12 +22,13 @@ void initPWMTimer3(bool power)
     if (power)
     {
         TCCR3B &= ~((1 << CS31));
-        TCCR3B |= (1 << CS30) | (1 << CS32);
+        TCCR3B |= ((1 << WGM32) | (1 << WGM33) | (1 << CS30) | (1 << CS32));
     }
     else
     {
-        TCCR3B &= ~((1 << CS31) | (1 << CS30) | (1 << CS32));
-        }
+
+        TCCR3B &= ~((1 << WGM32) | (1 << WGM33) | (1 << CS31) | (1 << CS30) | (1 << CS32));
+    }
     // PWM frequency calculation for FAST PWM mode on page 148 of datasheet
     // frequency of PWM = (F_clk)/((Prescaler)* (1 +TOP))
     // frequency of PWM = 16Mhz
@@ -45,7 +45,5 @@ void initPWMTimer3(bool power)
     // we want a duty cycle = 75%
     // OCR3A = 0.75 * 16
     // OCRnX = 12
-
-    
     OCR3A = 8;
 }
