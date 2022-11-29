@@ -8,8 +8,8 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/alan-manuel/Downloads/372-microprocessors/group-projects/include",
-                "/home/alan-manuel/Downloads/372-microprocessors/group-projects/src",
+                "/home/alan-manuel/Downloads/372-microprocessors/group-projects/lab-4/include",
+                "/home/alan-manuel/Downloads/372-microprocessors/group-projects/lab-4/src",
                 "/home/alan-manuel/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "/home/alan-manuel/.platformio/packages/framework-arduino-avr/variants/mega",
                 "/home/alan-manuel/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
@@ -22,8 +22,8 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/alan-manuel/Downloads/372-microprocessors/group-projects/include",
-                    "/home/alan-manuel/Downloads/372-microprocessors/group-projects/src",
+                    "/home/alan-manuel/Downloads/372-microprocessors/group-projects/lab-4/include",
+                    "/home/alan-manuel/Downloads/372-microprocessors/group-projects/lab-4/src",
                     "/home/alan-manuel/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "/home/alan-manuel/.platformio/packages/framework-arduino-avr/variants/mega",
                     "/home/alan-manuel/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
