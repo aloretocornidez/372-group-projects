@@ -8,6 +8,7 @@
 ## Member Tasks
 ### Jason Freeman
 - Analog to digital converison of an input signal, in other words, he must sample the data.
+- The sample rate must be at least 44kHz
 - Output of his data must be an array of length L = {2, 4, 8, 16}
 
 ### Alan Manuel
