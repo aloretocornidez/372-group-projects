@@ -32,11 +32,6 @@
 #define SL_TEMP_HIGH 0x41
 #define SL_TEMP_LOW 0x42
 
-#define wt_press 0
-#define db_press 1
-#define wt_release 2
-#define db_release 3
-int btncase = 0;
 #define on 1
 #define off 0
 
@@ -48,6 +43,15 @@ typedef enum accelerometerState
     trippedState
 } acceleroMeterState;
 
+typedef enum stateType_enum
+{
+    wait_press,
+    debounce_press,
+    wait_release,
+    debounce_release
+} buttonState;
+
+volatile buttonState state = wait_press;
 volatile acceleroMeterState accelState = initialState;
 
 signed int readSensor(unsigned char sensorHigh, unsigned char sensorLow);
@@ -81,6 +85,8 @@ int main()
     sei();
     init_SPI(); // Initialize SPI protocol for the LED Matrix (that shows the smiley face)
     initSwitchPB3();
+    initTimer1();
+    initPWMTimer3(true);
 
     //
     // Gyroscope Initialization
@@ -99,7 +105,6 @@ int main()
     //
 
     // Variables to keep track of the state of the face and the buzzer.
-    initPWMTimer3(true);
 
     while (1)
     {
@@ -107,7 +112,7 @@ int main()
         // Read the data from the gyroscope
         readAllAxes(&xAxis, &yAxis, &zAxis);
         StopI2C_Trans();
-        printAxes(&xAxis, &yAxis, &zAxis);
+        // printAxes(&xAxis, &yAxis, &zAxis);
 
         switch (accelState)
         {
@@ -139,6 +144,29 @@ int main()
             }
         }
 
+        switch (state)
+        {
+        case wait_press:
+            Serial.println("Button Case: wait_press");
+            break;
+
+        case debounce_press:
+            Serial.println("Button Case: debounce_press");
+            delayMs(1);
+            state = wait_release;
+            break;
+
+        case wait_release:
+            Serial.println("Button Case: wait_release");
+            break;
+
+        case debounce_release:
+            Serial.println("Button Case: debounce_release");
+            delayMs(1);
+            state = wait_press;
+            break;
+        }
+
         // The buzzer turns off whenever the switch is pressed or if the accelerometer returns to neutral.
 
         if (buzzerOn)
@@ -156,26 +184,23 @@ int main()
 }
 
 ISR(PCINT0_vect)
-{ // ISR
-    if (btncase == wt_press)
-    { // move through state machine based on button
-        btncase = db_press;
-    }
-    else if (btncase == wt_release)
+{
+    // This function is hit when the button is presssed
+    if (state == wait_press)
     {
-        Serial.println("in wt_release");
-        if(buzzerOn == true)
-        {
+        state = debounce_press;
+    }
+    else if (state == wait_release)
+    {
+        // Do nothing while waiting
+        if (buzzerOn == true)
+        { // if the led_speed is fast then change it to slow
             buzzerOn = false;
         }
-        else if(buzzerOn == false)
+        else
         {
-            buzzerOn = true;
+            buzzerOn = true; // else led_speed was slow so change it to fast
         }
+        state = debounce_release;
     }
-    else
-    {
-        Serial.println("in");
-    }
-    btncase = db_release;
 }

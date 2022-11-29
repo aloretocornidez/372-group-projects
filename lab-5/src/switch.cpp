@@ -19,4 +19,6 @@ void initSwitchPB3(){
     PCICR |= (1 << PCIE0); // enabling PCINT 0-7
 
     PCMSK0 |= (1 << PCINT3); // enabling PCINT3
+
+    
 }
