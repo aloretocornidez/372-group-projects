@@ -112,7 +112,7 @@ int main()
         // Read the data from the gyroscope
         readAllAxes(&xAxis, &yAxis, &zAxis);
         StopI2C_Trans();
-        // printAxes(&xAxis, &yAxis, &zAxis);
+        printAxes(&xAxis, &yAxis, &zAxis);
 
         switch (accelState)
         {
@@ -147,21 +147,17 @@ int main()
         switch (state)
         {
         case wait_press:
-            Serial.println("Button Case: wait_press");
             break;
 
         case debounce_press:
-            Serial.println("Button Case: debounce_press");
             delayMs(1);
             state = wait_release;
             break;
 
         case wait_release:
-            Serial.println("Button Case: wait_release");
             break;
 
         case debounce_release:
-            Serial.println("Button Case: debounce_release");
             delayMs(1);
             state = wait_press;
             break;
