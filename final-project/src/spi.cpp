@@ -1,4 +1,4 @@
-
+// Source code for 8x8 Matrix interfacing.
 #include <Arduino.h>
 #include "SPI.h"
 #include <avr/interrupt.h>
@@ -42,6 +42,7 @@ void write_execute(unsigned char CMD, unsigned char data)
 
 void face(bool input)
 {
+    // Happy Face
     if (input == true)
     {
         write_execute(0x01, 0b00000000); // all LEDS in Row 1 are off
@@ -53,6 +54,7 @@ void face(bool input)
         write_execute(0x07, 0b00111100); // row 7 LEDS
         write_execute(0x08, 0b00000000); // row 8 LEDS
     }
+    // Sad Face
     else
     {
         write_execute(0x01, 0b00000000); // all LEDS in Row 1 are off

@@ -47,3 +47,22 @@ void initPWMTimer3(bool power)
     // OCRnX = 12
     OCR3A = 8;
 }
+
+
+void turnOn()
+{
+    // prescaler 1
+    TCCR4B |= (1 << CS40);
+    TCCR4B &= ~((1 << CS41) | (1 << CS42));
+
+    // output
+    DDRE |= (1 << DDE3);
+}
+void turnOff()
+{
+    // prescaler no clock
+    TCCR4B &= ~((1 << CS41) | (1 << CS42) | (1 << CS40));
+
+    // low
+    DDRE &= ~(1 << DDE3);
+}

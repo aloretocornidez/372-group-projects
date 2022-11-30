@@ -1,4 +1,4 @@
-
+// Header File for the SPI communication with the 8x8 matrix
 #ifndef SPI_H
 #define SPI_H
 
