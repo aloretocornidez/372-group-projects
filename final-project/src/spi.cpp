@@ -40,32 +40,67 @@ void write_execute(unsigned char CMD, unsigned char data)
     SPI_PORT |= (1 << SPI_SS_BIT);  // disable chip select to end SPI frame
 }
 
-void face(bool input)
+void disp_spectrum(int inputlevels[7]){
+    byte outputlevels[7];
+    for(int i =0; i < 8; i++){
+        switch (inputlevels[i])
+        {
+        case 0:
+            outputlevels[i] = 0;
+            break;
+        
+        case 1:
+            outputlevels[i] = 128;
+            break;
+
+        case 2:
+            outputlevels[i] = 192;
+            break;
+
+        case 3:
+            outputlevels[i] = 224;
+            break;
+        
+        case 4:
+            outputlevels[i] = 240;
+            break;
+
+        case 5:
+            outputlevels[i] = 248;
+            break; 
+
+        case 6:
+            outputlevels[i] = 252;
+            break;
+        
+        case 7:
+            outputlevels[i] = 254;
+            break;
+
+        case 8:
+            outputlevels[i] = 255;
+            break;  
+
+        default:
+            outputlevels[i] = 0;
+            break;
+        }
+    }
+    display(outputlevels);
+}
+
+void display(byte input[7])
 {
-    // Happy Face
-    if (input == true)
-    {
-        write_execute(0x01, 0b00000000); // all LEDS in Row 1 are off
-        write_execute(0x02, 0b01000010); // row 2 LEDS
-        write_execute(0x03, 0b01000010); // row 3 LEDS
-        write_execute(0x04, 0b00000000); // row 4 LEDS
-        write_execute(0x05, 0b10000001); // row 5 LEDS
-        write_execute(0x06, 0b01100110); // row 6 LEDS
-        write_execute(0x07, 0b00111100); // row 7 LEDS
-        write_execute(0x08, 0b00000000); // row 8 LEDS
-    }
-    // Sad Face
-    else
-    {
-        write_execute(0x01, 0b00000000); // all LEDS in Row 1 are off
-        write_execute(0x02, 0b01000010); // row 2 LEDS
-        write_execute(0x03, 0b01000010); // row 3 LEDS
-        write_execute(0x04, 0b00000000); // row 4 LEDS
-        write_execute(0x05, 0b00111100); // row 5 LEDS
-        write_execute(0x06, 0b01100110); // row 6 LEDS
-        write_execute(0x07, 0b10000001); // row 7 LEDS
-        write_execute(0x08, 0b00000000); // row 8 LEDS
-    }
+
+        write_execute(0x01, input[0]); // all LEDS in Row 1 are off
+        write_execute(0x02, input[1]); // row 2 LEDS
+        write_execute(0x03, input[2]); // row 3 LEDS
+        write_execute(0x04, input[3]); // row 4 LEDS
+        write_execute(0x05, input[4]); // row 5 LEDS
+        write_execute(0x06, input[5]); // row 6 LEDS
+        write_execute(0x07, input[6]); // row 7 LEDS
+        write_execute(0x08, input[7]); // row 8 LEDS
+
 }
 
 void init_SPI()
