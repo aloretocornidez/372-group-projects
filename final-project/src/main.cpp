@@ -22,6 +22,10 @@ bool faceState = true; // True: Happy, False: sad
 
 int main()
 {
+    // This array holds the power in each of the 8 frequency bins.
+    float powerArray[8] = {1.2, 3.1, 4.4, 4.5, 3.2, 4.5, 5.2, 2.1};
+
+
 
     Serial.begin(9600); // using serial port to print values from I2C bus
 

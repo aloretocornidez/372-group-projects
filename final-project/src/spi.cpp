@@ -40,15 +40,17 @@ void write_execute(unsigned char CMD, unsigned char data)
     SPI_PORT |= (1 << SPI_SS_BIT);  // disable chip select to end SPI frame
 }
 
-void disp_spectrum(int inputlevels[7]){
+void disp_spectrum(int inputlevels[7])
+{
     byte outputlevels[7];
-    for(int i =0; i < 8; i++){
+    for (int i = 0; i < 8; i++)
+    {
         switch (inputlevels[i])
         {
         case 0:
             outputlevels[i] = 0;
             break;
-        
+
         case 1:
             outputlevels[i] = 128;
             break;
@@ -60,26 +62,26 @@ void disp_spectrum(int inputlevels[7]){
         case 3:
             outputlevels[i] = 224;
             break;
-        
+
         case 4:
             outputlevels[i] = 240;
             break;
 
         case 5:
             outputlevels[i] = 248;
-            break; 
+            break;
 
         case 6:
             outputlevels[i] = 252;
             break;
-        
+
         case 7:
             outputlevels[i] = 254;
             break;
 
         case 8:
             outputlevels[i] = 255;
-            break;  
+            break;
 
         default:
             outputlevels[i] = 0;
@@ -92,15 +94,14 @@ void disp_spectrum(int inputlevels[7]){
 void display(byte input[7])
 {
 
-        write_execute(0x01, input[0]); // all LEDS in Row 1 are off
-        write_execute(0x02, input[1]); // row 2 LEDS
-        write_execute(0x03, input[2]); // row 3 LEDS
-        write_execute(0x04, input[3]); // row 4 LEDS
-        write_execute(0x05, input[4]); // row 5 LEDS
-        write_execute(0x06, input[5]); // row 6 LEDS
-        write_execute(0x07, input[6]); // row 7 LEDS
-        write_execute(0x08, input[7]); // row 8 LEDS
-
+    write_execute(0x01, input[0]); // all LEDS in Row 1 are off
+    write_execute(0x02, input[1]); // row 2 LEDS
+    write_execute(0x03, input[2]); // row 3 LEDS
+    write_execute(0x04, input[3]); // row 4 LEDS
+    write_execute(0x05, input[4]); // row 5 LEDS
+    write_execute(0x06, input[5]); // row 6 LEDS
+    write_execute(0x07, input[6]); // row 7 LEDS
+    write_execute(0x08, input[7]); // row 8 LEDS
 }
 
 void init_SPI()
@@ -113,3 +114,66 @@ void init_SPI()
     write_execute(0x0F, 0x00); // display test register - set to normal operation (0x01)
 }
 
+/*
+ * Input: array pointer to an array with 8 indexes.
+ * Purpose: Sets display of matrix to larger light up more of each column
+ * whenever there is more power in an index.
+ * Lower frequency bins (20 Hz - 100 Hz) will be in index[0], higher
+ * frequency bins (15kHz - 20kHz) will be in index[7].
+ *
+ */
+void displayArray(float *array)
+{
+
+    for (int i = 0; i < 8; i++)
+    {
+        printf("Value: %.1f\n", array[i]);
+    }
+    
+    printf("Incmenting Array\n");
+    for (int i = 0; i < 8; i++)
+    {
+        array[i] = array[i] + 1;
+        printf("Value: %.1f\n", array[i]);
+    }
+}
+
+
+// Here is some code that will display the function in action.
+// You can run it at https://www.onlinegdb.com/online_c_compiler 
+/*
+#include <stdio.h>
+void displayArray(float *array)
+{
+
+    for (int i = 0; i < 8; i++)
+    {
+        printf("Value: %.1f\n", array[i]);
+    }
+    
+    printf("Incmenting Array\n");
+    for (int i = 0; i < 8; i++)
+    {
+        array[i] = array[i] + 1;
+        printf("Value: %.1f\n", array[i]);
+    }
+}
+
+int main()
+{
+    // This array holds the power in each of the 8 frequency bins.
+    float powerArray[8] = {1.2, 3.1, 4.4, 4.5, 3.2, 4.5, 5.2, 2.1};
+    
+    
+    
+    displayArray(powerArray);
+    
+    printf("Back in main, looking at values\n");
+    for (int i = 0; i < 8; i++)
+    {
+        printf("Value: %.1f\n", powerArray[i]);
+    }
+    
+    return 0;
+}
+*/
