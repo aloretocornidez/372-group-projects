@@ -8,7 +8,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-
 #include "timer.h"
 #include "spi.h"
 
