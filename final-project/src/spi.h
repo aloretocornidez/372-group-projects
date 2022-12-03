@@ -4,8 +4,9 @@
 
 void SPI_MASTER_Init();
 void write_execute(unsigned char CMD, unsigned char data);
-void disp_spectrum(int inputlevels[7]);
 void init_SPI();
 
+void display(byte input[]);
 void displayArray(float *array);
+void disp_spectrum(int inputlevels[7]);
 #endif

@@ -10,6 +10,7 @@
 
 #include "timer.h"
 #include "spi.h"
+#include "fft.h"
 
 
 
@@ -21,9 +22,19 @@ bool faceState = true; // True: Happy, False: sad
 
 int main()
 {
+
+    // Initialize an array that shall hold the input signal
+    // 512 is chosen because it is a power of 2, thus fft implementation is done without zero-padding.
+    float inputSignal[512];
+    float transformedSignal[512];
+
     // This array holds the power in each of the 8 frequency bins.
     float powerArray[8] = {1.2, 3.1, 4.4, 4.5, 3.2, 4.5, 5.2, 2.1};
 
+    initFFTparams();
+
+
+    FFT(inputSignal, transformedSignal);
 
 
     Serial.begin(9600); // using serial port to print values from I2C bus

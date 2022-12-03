@@ -1,6 +1,6 @@
 // Source code for 8x8 Matrix interfacing.
 #include <Arduino.h>
-#include "SPI.h"
+#include "spi.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
