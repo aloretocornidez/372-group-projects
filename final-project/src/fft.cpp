@@ -1,8 +1,7 @@
 #include <stdio.h>
+
+
 #define FFT_SIZE 512
-
-
-
 
 void initFFTparams()
 {

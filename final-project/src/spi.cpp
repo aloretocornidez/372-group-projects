@@ -129,7 +129,7 @@ void displayArray(float *array)
     {
         printf("Value: %.1f\n", array[i]);
     }
-    
+
     printf("Incmenting Array\n");
     for (int i = 0; i < 8; i++)
     {
@@ -140,7 +140,7 @@ void displayArray(float *array)
 
 
 // Here is some code that will display the function in action.
-// You can run it at https://www.onlinegdb.com/online_c_compiler 
+// You can run it at https://www.onlinegdb.com/online_c_compiler
 /*
 #include <stdio.h>
 void displayArray(float *array)
@@ -150,7 +150,7 @@ void displayArray(float *array)
     {
         printf("Value: %.1f\n", array[i]);
     }
-    
+
     printf("Incmenting Array\n");
     for (int i = 0; i < 8; i++)
     {
@@ -163,17 +163,17 @@ int main()
 {
     // This array holds the power in each of the 8 frequency bins.
     float powerArray[8] = {1.2, 3.1, 4.4, 4.5, 3.2, 4.5, 5.2, 2.1};
-    
-    
-    
+
+
+
     displayArray(powerArray);
-    
+
     printf("Back in main, looking at values\n");
     for (int i = 0; i < 8; i++)
     {
         printf("Value: %.1f\n", powerArray[i]);
     }
-    
+
     return 0;
 }
 */
