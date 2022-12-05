@@ -45,6 +45,7 @@ float normalizeValue(int value)
 void populateInputBuffer(float *array)
 {
 
+    // Samples the voltage to fill the 
     for (int i = 0; i < FFT_SIZE; i++)
     {
         array[i] = sampleVoltage();

@@ -7,13 +7,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "../lib/kiss_fft.h"
 #include "timer.h"
 #include "spi.h"
 #include "fft.h"
 #include "adc.h"
 #include "parameters.h"
-#include "fix_fft.h"
 
 
 static uint8_t channel = 0;
@@ -40,6 +38,7 @@ int main()
     /* Initialize FFT parameters to prepare for the fast fourier transform. */
     initFFTparams(); // Initialialize FFT parameters (like butterfly values).
 
+    // Initialize i2c communication with a baud rate of 9600.
     Serial.begin(9600); // using serial port to print values from I2C bus
 
     while (true)
@@ -48,9 +47,13 @@ int main()
         /* Sample the data and write the data into a matrix (the matrix length should be a power of 2. */
         populateInputBuffer(inputSignal);
 
-        /* Conduct a fourier transform on the data and ouptut a matrix. */
+
+        for(int i = 0; i < FFT_SIZE; i++)
+        {
+            Serial.println(inputSignal[i]);
+        }
+        /* Conduct a foucrier transform on the data and ouptut a matrix. */
         // FFT(inputSignal, transformedSignal);
-        fix_fftr((int_8t)inputSignal, m, 0);
 
 
         
