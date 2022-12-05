@@ -6,31 +6,29 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdfix.h>
 
-#include "timer.h"
 #include "spi.h"
 #include "fft.h"
 #include "adc.h"
 #include "parameters.h"
 
-
 static uint8_t channel = 0;
+
+fix fr[NUM_SAMPLES]; // array of real part of samples (WINDOWED)
+fix fi[NUM_SAMPLES]; // array of imaginary part of samples (WINDOWED)
 
 int main()
 {
 
     // Initialize an array that shall hold the input signal
     float inputSignal[FFT_SIZE];
-    float transformedSignal[FFT_SIZE]; // This is the size that the FFT renders.
-    int m = log10(FFT_SIZE) / log10(2);
 
     // This array holds the power in each of the 8 frequency bins.
     float powerArray[8];
 
-   
-
     /* Initialize Analog to Digital Conversion with an anolog input. */
-    initADC(channel);      // Initialize ADC.
+    initADC(channel); // Initialize ADC.
 
     /* Initialize 8x8 Matrix */
     init_SPI();
@@ -47,23 +45,17 @@ int main()
         /* Sample the data and write the data into a matrix (the matrix length should be a power of 2. */
         populateInputBuffer(inputSignal);
 
-
-        for(int i = 0; i < FFT_SIZE; i++)
+        for (int i = 0; i < FFT_SIZE; i++)
         {
             Serial.println(inputSignal[i]);
         }
         /* Conduct a foucrier transform on the data and ouptut a matrix. */
         // FFT(inputSignal, transformedSignal);
 
-
-        
         /* Take the fourier transform matrix and calculate the power within specified frequency bins. */
-        
-
 
         /* Take the power matrix and  print out the bins on the 8x8 matrix*/
     }
 
     return 0;
 }
-
