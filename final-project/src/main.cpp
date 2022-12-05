@@ -7,12 +7,13 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include "../lib/kiss_fft.h"
 #include "timer.h"
 #include "spi.h"
 #include "fft.h"
 #include "adc.h"
 #include "parameters.h"
-
+#include "fix_fft.h"
 
 
 static uint8_t channel = 0;
@@ -23,17 +24,20 @@ int main()
     // Initialize an array that shall hold the input signal
     float inputSignal[FFT_SIZE];
     float transformedSignal[FFT_SIZE]; // This is the size that the FFT renders.
+    int m = log10(FFT_SIZE) / log10(2);
 
     // This array holds the power in each of the 8 frequency bins.
-    float powerArray[8] = {1.2, 3.1, 4.4, 4.5, 3.2, 4.5, 5.2, 2.1};
+    float powerArray[8];
 
-    FFT(inputSignal, transformedSignal);
+   
 
     /* Initialize Analog to Digital Conversion with an anolog input. */
+    initADC(channel);      // Initialize ADC.
 
     /* Initialize 8x8 Matrix */
-    init_SPI();      // Initialize LED Matrix.
-    initADC(channel);      // Initialize ADC.
+    init_SPI();
+
+    /* Initialize FFT parameters to prepare for the fast fourier transform. */
     initFFTparams(); // Initialialize FFT parameters (like butterfly values).
 
     Serial.begin(9600); // using serial port to print values from I2C bus
@@ -45,12 +49,14 @@ int main()
         populateInputBuffer(inputSignal);
 
         /* Conduct a fourier transform on the data and ouptut a matrix. */
-        FFT(inputSignal, transformedSignal);
+        // FFT(inputSignal, transformedSignal);
+        fix_fftr((int_8t)inputSignal, m, 0);
+
 
         
-
-
         /* Take the fourier transform matrix and calculate the power within specified frequency bins. */
+        
+
 
         /* Take the power matrix and  print out the bins on the 8x8 matrix*/
     }
