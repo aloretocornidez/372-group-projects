@@ -9,4 +9,8 @@ void init_SPI();
 void display(byte input[]);
 void displayArray(float *array);
 void disp_spectrum(int inputlevels[7]);
+
+void testDisplay(float* input);
+
+void clear();
 #endif

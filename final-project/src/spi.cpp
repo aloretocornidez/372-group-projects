@@ -112,68 +112,72 @@ void init_SPI()
     write_execute(0x0B, 0x07); // scanning all rows and columns
     write_execute(0x0C, 0x01); // set shutdown register to normal operation (0x01)
     write_execute(0x0F, 0x00); // display test register - set to normal operation (0x01)
+
+    clear();
 }
 
-/*
- * Input: array pointer to an array with 8 indexes.
- * Purpose: Sets display of matrix to larger light up more of each column
- * whenever there is more power in an index.
- * Lower frequency bins (20 Hz - 100 Hz) will be in index[0], higher
- * frequency bins (15kHz - 20kHz) will be in index[7].
- *
- */
-void displayArray(float *array)
+void testDisplay(float *input)
 {
 
-    for (int i = 0; i < 8; i++)
-    {
-        printf("Value: %.1f\n", array[i]);
-    }
+    // Data array to set the power of the signal.
+    byte level[8] = {0b10000000, 0b11000000, 0b11100000, 0b11110000, 0b11111000, 0b11111100, 0b11111110, 0b11111111};
 
-    printf("Incmenting Array\n");
+    // An array to load the column that will be printed to.
+    int column[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+
+    // The thresholds that decides how much of each column will be lit up.
+    float divisions[8] = {100, 200, 300, 400, 500, 600, 700, 800};
+
     for (int i = 0; i < 8; i++)
     {
-        array[i] = array[i] + 1;
-        printf("Value: %.1f\n", array[i]);
+        if (input[i] < divisions[0])
+        {
+            write_execute(column[i], level[0]);
+        }
+        else if (input[i] < divisions[1])
+        {
+            write_execute(column[i], level[1]);
+        }
+        else if (input[i] < divisions[2])
+        {
+            write_execute(column[i], level[2]);
+        }
+        else if (input[i] < divisions[3])
+        {
+            write_execute(column[i], level[3]);
+        }
+        else if (input[i] < divisions[4])
+        {
+            write_execute(column[i], level[4]);
+        }
+        else if (input[i] < divisions[5])
+        {
+            write_execute(column[i], level[5]);
+        }
+        else if (input[i] < divisions[6])
+        {
+            write_execute(column[i], level[6]);
+        }
+        else if (input[i] < divisions[7])
+        {
+            write_execute(column[i], level[7]);
+        }
+        else
+        {
+            write_execute(column[i], level[0]);
+        }
     }
 }
 
-
-// Here is some code that will display the function in action.
-// You can run it at https://www.onlinegdb.com/online_c_compiler
-/*
-#include <stdio.h>
-void displayArray(float *array)
+// Clears the array to prepare data.
+void clear()
 {
-
-    for (int i = 0; i < 8; i++)
-    {
-        printf("Value: %.1f\n", array[i]);
-    }
-
-    printf("Incmenting Array\n");
-    for (int i = 0; i < 8; i++)
-    {
-        array[i] = array[i] + 1;
-        printf("Value: %.1f\n", array[i]);
-    }
+    write_execute(0x01, 0b00000000); // all LEDS in Row 1 are off
+    write_execute(0x02, 0b00000000); // row 2 LEDS
+    write_execute(0x03, 0b00000000); // row 3 LEDS
+    write_execute(0x04, 0b00000000); // row 4 LEDS
+    write_execute(0x05, 0b00000000); // row 5 LEDS
+    write_execute(0x06, 0b00000000); // row 6 LEDS
+    write_execute(0x07, 0b00000000); // row 7 LEDS
+    write_execute(0x08, 0b00000000); // row 8 LEDS
 }
-
-int main()
-{
-    // This array holds the power in each of the 8 frequency bins.
-    float powerArray[8] = {1.2, 3.1, 4.4, 4.5, 3.2, 4.5, 5.2, 2.1};
-
-
-
-    displayArray(powerArray);
-
-    printf("Back in main, looking at values\n");
-    for (int i = 0; i < 8; i++)
-    {
-        printf("Value: %.1f\n", powerArray[i]);
-    }
-
-    return 0;
-}
-*/

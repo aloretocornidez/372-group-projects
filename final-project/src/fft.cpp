@@ -125,7 +125,7 @@ void FFTfix(fix *fr, fix *fi)
     }
 }
 
-// 
+//
 void initFFTparams()
 {
     populateSinewave();
@@ -160,5 +160,65 @@ void populateSinewave()
     for (int i = 0; i < NUM_SAMPLES; i++)
     {
         Sinewave[i] = float2fix(sin(6.283 * ((float)(i) / NUM_SAMPLES)));
+    }
+}
+
+void powerCalculation(fix *input, float *output)
+{
+
+    int inputSize = sizeof(input) / sizeof(input[0]);
+
+    int binSize = FFT_SIZE / 8;
+
+    int bins = 8;
+
+    // First loop does the calculation for each bin.
+    for (int i = 0; i < bins; i++)
+    {
+
+        // Second Loop calculates the power in a frequency bin.
+        int sum = 0;
+
+        // The offset is used to select the bin that we are in for the elements.
+        int offset = i * binSize;
+
+        for (int j = 0; j < binSize; j++)
+        {
+            int k = input[j + offset];
+
+            // Get the total Sum of the elements in the array for a total offset.
+            if (k > 0)
+            {
+                sum = sum + k;
+            }
+            else
+            {
+                sum = sum - k;
+            }
+        }
+
+        // Get the power in a single bin.
+        int power = sum / bins;
+
+        // Set the current bin as the total power calculation.
+        output[i] = power;
+    }
+}
+
+void normalizePower(float* input)
+{
+    for(int i = 0; i < 8; i++)
+    {
+        float k = input[i];
+
+        if( k < 3)
+        {
+            input[i] = 0;
+        }
+        else if(k < 5)
+        {
+            input[i] = 1;
+        }
+
     }
 }

@@ -42,19 +42,21 @@ int main()
     while (true)
     {
 
-        /* Sample the data and write the data into a matrix (the matrix length should be a power of 2. */
+        // Sample the data and write the data into a matrix (the matrix length should be a power of 2.
         populateInputBuffer(inputSignal);
 
-        for (int i = 0; i < FFT_SIZE; i++)
-        {
-            Serial.println(inputSignal[i]);
-        }
-        /* Conduct a foucrier transform on the data and ouptut a matrix. */
-        // FFT(inputSignal, transformedSignal);
+        // Conduct a foucrier transform on the data and ouptut a matrix.
+        FFT(inputSignal, fr, fi);
 
-        /* Take the fourier transform matrix and calculate the power within specified frequency bins. */
+        // Take the fourier transform matrix and calculate the power within specified frequency bins.
+        powerCalculation(fr, powerArray);
 
-        /* Take the power matrix and  print out the bins on the 8x8 matrix*/
+        // Normalize the values that are gathered in each bin to values parsable by the display api.
+        normalizePower(powerArray);
+
+        // Take the power matrix and  print out the bins on the 8x8 matrix.
+        testDisplay(powerArray);
+
     }
 
     return 0;

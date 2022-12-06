@@ -13,12 +13,16 @@
 #include "parameters.h"
 
 
-void FFT(float *input, float *output);
+void FFT(float *input, fix* fr, fix* fi);
 
 void initFFTparams();
 
 void populateSinewave();
 
 void bitReversal(float* input, fix* fr, fix* fi);
+
+void powerCalculation(fix* input, float* output);
+
+void normalizePower(float* input);
 
 #endif
